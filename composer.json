@@ -16,10 +16,10 @@
   ],
   "require": {
     "php": "^7.0|^8.0",
-    "ext-json": "*"
+    "ext-json": "*",
+    "friendsofphp/php-cs-fixer": "^2.18"
   },
   "require-dev": {
-    "friendsofphp/php-cs-fixer": "^2.18",
     "mockery/mockery": "^1.4.2",
     "nunomaduro/collision": "^5.0",
     "phpunit/phpunit": "^9.3.3"
@@ -33,5 +33,12 @@
     "psr-4": {
       "Tests\\": "tests/"
     }
+  },
+  "scripts": {
+    "php-cs": [
+      "vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix src",
+      "vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix config",
+      "vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix tests"
+    ]
   }
 }

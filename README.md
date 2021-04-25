@@ -1,12 +1,12 @@
 <h1 align="center">
     <a href="https://github.com/alicfeng/laravel-response">
-        LaravelResponse could make your api standard as well as Improve development efficiency
+        LaravelResponse
     </a>
 </h1>
 <p align="center">
-    One Laravel Plugin For Manage API Response Package
+    A Laravel Plugin For Manage API Response Package
      <br>
-    LaravelResponse 
+    It could make your api standard as well as Improve development efficiency
 </p>
 <p align="center">
     <a href="https://travis-ci.com/github/alicfeng/laravel-response">

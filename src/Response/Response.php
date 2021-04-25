@@ -138,7 +138,7 @@ class Response
      */
     private function translate($message)
     {
-        return call_user_func([config('helper.translate.instance'), 'translate'], $message);
+        return call_user_func([config('samego-response.translate.instance'), 'translate'], $message);
     }
 
     /**
@@ -186,11 +186,6 @@ class Response
 
         // unset useless vars
         unset($package, $structure);
-
-        // response to print log
-        if (true === $this->log) {
-            call_user_func([Log::class, $this->log_level], $this->response);
-        }
 
         return response($this->response, $this->status_code, $this->headers);
     }

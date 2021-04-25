@@ -6,9 +6,9 @@
 
 namespace Samego\Response\ServiceProvider;
 
-use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\ServiceProvider as FrameworkServiceProvider;
 
-class ResponseServiceProvider extends ServiceProvider
+class ServiceProvider extends FrameworkServiceProvider
 {
     /**
      * Indicates if loading of the provider is deferred.
@@ -19,7 +19,7 @@ class ResponseServiceProvider extends ServiceProvider
 
     public function register()
     {
-        $this->mergeConfigFrom(__DIR__ . '/../../../config/response.php', 'response');
+        $this->mergeConfigFrom(__DIR__ . '/../../../config/samego-response.php', 'response');
     }
 
     public function boot()
@@ -31,7 +31,7 @@ class ResponseServiceProvider extends ServiceProvider
     {
         $this->publishes(
             [
-                __DIR__ . '/../../../config/response.php' => config_path('samego-response.php'),
+                __DIR__ . '/../../../config/samego-response.php' => config_path('samego-response.php'),
             ],
             'samego-response'
         );

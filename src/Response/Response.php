@@ -239,13 +239,13 @@ class Response
     /**
      * @function    generate the response result
      * @description generate the response result
-     * @param array $code_enum   package[code,message]
-     * @param array $data        package.data
-     * @param int   $status_code http.status_code
-     * @param array $headers     http.headers
+     * @param array        $code_enum   package[code,message]
+     * @param object|array $data        package.data
+     * @param int          $status_code http.status_code
+     * @param array        $headers     http.headers
      * @return ResponseFactory
      */
-    public function result(array $code_enum, array $data = [], int $status_code = 200, array $headers = [])
+    public function result(array $code_enum, $data = [], int $status_code = 200, array $headers = [])
     {
         return $this
             ->setStatusCode($status_code)

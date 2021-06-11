@@ -1,6 +1,6 @@
 <h1 align="center">
-    <a href="https://github.com/alicfeng/laravel-response">
-        LaravelResponse
+    <a href="https://github.com/alicfeng/api-response">
+        ApiResponse
     </a>
 </h1>
 <p align="center">
@@ -9,19 +9,20 @@
     It could make your api standard as well as Improve development efficiency
 </p>
 <p align="center">
-    <a href="https://travis-ci.com/github/alicfeng/laravel-response">
-        <img src="https://travis-ci.com/alicfeng/LaravelResponse.svg?branch=master" alt="Build Status">
+    <a href="https://travis-ci.com/github/alicfeng/api-response">
+        <img src="https://travis-ci.com/alicfeng/ApiResponse.svg?branch=master" alt="Build Status">
     </a>
-    <a href="https://packagist.org/packages/alicfeng/laravel-response">
-        <img src="https://poser.pugx.org/alicfeng/laravel-response/v/stable.svg" alt="Latest Stable Version">
+    <a href="https://packagist.org/packages/alicfeng/api-response">
+        <img src="https://poser.pugx.org/alicfeng/api-response/v/stable.svg" alt="Latest Stable Version">
     </a>
-    <a href="https://packagist.org/packages/alicfeng/laravel-response">
-        <img src="https://poser.pugx.org/alicfeng/laravel-response/d/total.svg" alt="Total Downloads">
+    <a href="https://packagist.org/packages/alicfeng/api-response">
+        <img src="https://poser.pugx.org/alicfeng/api-response/d/total.svg" alt="Total Downloads">
     </a>
-    <a href="https://packagist.org/packages/alicfeng/laravel-response">
-        <img src="https://poser.pugx.org/alicfeng/laravel-response/license.svg" alt="License">
+    <a href="https://packagist.org/packages/alicfeng/api-response">
+        <img src="https://poser.pugx.org/alicfeng/api-response/license.svg" alt="License">
     </a>
 </p>
+
 
 
 
@@ -35,7 +36,7 @@
 ## 安装
 
 ```shell
-composer require alicfeng/laravel-response -vvv
+composer require alicfeng/api-response -vvv
 
 php artisan vendor:publish --provider="Samego\Response\ServiceProvider\ServiceProvider"
 ```
@@ -45,13 +46,19 @@ php artisan vendor:publish --provider="Samego\Response\ServiceProvider\ServicePr
 ## 配置
 
 ```php
+<?php
+
+/*
+ * What samego team is that is 'one thing, a team, work together'
+ */
+
 return [
-    // about package setting
     /*Response Package Structure*/
     'structure' => [
-        'code'    => 'code',
-        'message' => 'message',
-        'data'    => 'data',
+        'code'       => 'code',
+        'message'    => 'message',
+        'data'       => 'data',
+        'request_id' => 'request_id',
     ],
 
     // Default Header simple:Content-Type => application/json
@@ -69,16 +76,15 @@ return [
     /*Log*/
     'log'       => [
         'log'   => true,
-        'level' => 'notice',
     ],
 
-    // translate
+    // Translate
     'translate' => [
         'model'    => true,
         'instance' => \Samego\Response\Service\Translation::class,
     ],
 
-    // runtime model
+    // Runtime model
     'runtime'   => [
         'trace' => [
             'request'    => true,
@@ -88,9 +94,10 @@ return [
         ],
     ],
 
-    // debug model setting
+    // Debug model setting
     'debug'     => false,
 ];
+
 ```
 
 
@@ -104,7 +111,7 @@ namespace App\Services;
 
 use App\Enums\Application\CodeEnum;
 use Illuminate\Contracts\Routing\ResponseFactory;
-use Samego\Response\Service\ServiceAbstract;
+use Samego\Response\Facades\ApiResponse;
 
 /**
  * Class Service
@@ -112,13 +119,23 @@ use Samego\Response\Service\ServiceAbstract;
  * @version 1.0.0
  * @author  AlicFeng
  */
-class Service extends ServiceAbstract
+class Service
 {
-    public function __construct()
+     /**
+     * @function    result
+     * @description 响应业务处理结果调用
+     * @param array $code_enum   业务编码枚举
+     * @param array $data        业务结果数据
+     * @param int   $status_code 协议状态编码
+     * @param array $headers     协议头部信息
+     * @return ResponseFactory
+     * @author      AlicFeng
+     */
+     public function result(array $code_enum, $data = [], int $status_code = 200, array $headers = [])
     {
-        parent::__construct();
+        return ApiResponse::result($code_enum, $data, $status_code, $headers);
     }
-
+  
     /**
      * @function    success
      * @description 响应业务成功处理结果调用
@@ -131,7 +148,7 @@ class Service extends ServiceAbstract
      */
     public function success($data = [], array $code_enum = CodeEnum::SUCCESS, int $status_code = 200, array $headers = [])
     {
-        return $this->rspHelper->result($code_enum, $data, $status_code, $headers);
+        return $this->result($code_enum, $data, $status_code, $headers);
     }
 
     /**
@@ -146,7 +163,7 @@ class Service extends ServiceAbstract
      */
     public function failure(array $code_enum = CodeEnum::FAILURE, $data = [], int $status_code = 200, array $headers = [])
     {
-        return $this->rspHelper->result($code_enum, $data, $status_code, $headers);
+        return $this->result($code_enum, $data, $status_code, $headers);
     }
 }
 ```
@@ -178,6 +195,5 @@ class HelloService extends Service
         return $this->success($data);
     }
 }
-
 ```
 

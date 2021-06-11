@@ -5,12 +5,12 @@
  */
 
 return [
-    // about package setting
     /*Response Package Structure*/
     'structure' => [
-        'code'    => 'code',
-        'message' => 'message',
-        'data'    => 'data',
+        'code'       => 'code',
+        'message'    => 'message',
+        'data'       => 'data',
+        'request_id' => 'request_id',
     ],
 
     // Default Header simple:Content-Type => application/json
@@ -28,16 +28,15 @@ return [
     /*Log*/
     'log'       => [
         'log'   => true,
-        'level' => 'notice',
     ],
 
-    // translate
+    // Translate
     'translate' => [
         'model'    => true,
         'instance' => \Samego\Response\Service\Translation::class,
     ],
 
-    // runtime model
+    // Runtime model
     'runtime'   => [
         'trace' => [
             'request'    => true,
@@ -47,6 +46,6 @@ return [
         ],
     ],
 
-    // debug model setting
+    // Debug model setting
     'debug'     => false,
 ];

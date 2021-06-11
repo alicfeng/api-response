@@ -6,10 +6,6 @@
 
 namespace Samego\Response;
 
-use Illuminate\Contracts\Routing\ResponseFactory;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Log;
-
 class Response
 {
     /**
@@ -57,18 +53,10 @@ class Response
     protected $log = true;
 
     /**
-     * log level
-     * setting by helper configuration file or log function
-     * default notice level.
-     * @var string
+     * api-response config.
+     * @var array
      */
-    protected $log_level = 'notice';
-
-    /**
-     * helper debug.
-     * @var bool
-     */
-    protected $debug = false;
+    protected $config;
 
     /**
      * helper transform_class.
@@ -76,11 +64,9 @@ class Response
      */
     protected $transform_class = null;
 
-    public function __construct()
+    public function __construct(array $config)
     {
-        $this->log       = config('samego-response.log.enable', true);
-        $this->log_level = config('samego-response.log.level', 'notice');
-        $this->debug     = config('samego-response.debug', false);
+        $this->config = $config;
     }
 
     /**
@@ -91,7 +77,7 @@ class Response
      */
     private function setHeaders(array $headers)
     {
-        $this->headers = array_merge(config('samego-response.header', []), $headers);
+        $this->headers = array_merge($this->config['header'] ?? [], $headers);
 
         return $this;
     }
@@ -121,7 +107,7 @@ class Response
         $this->message = end($code_enum);
 
         // translate
-        if (true === config('samego-response.translate.model')) {
+        if (true === $this->config['translate']['model'] ?? false) {
             $this->message = $this->translate($this->message);
         }
 
@@ -138,7 +124,7 @@ class Response
      */
     private function translate($message)
     {
-        return call_user_func([config('samego-response.translate.instance'), 'translate'], $message);
+        return call_user_func([$this->config['translate']['instance'], 'translate'], $message);
     }
 
     /**
@@ -157,7 +143,7 @@ class Response
     /**
      * @function    generate the response
      * @description generate response package message
-     * @return ResponseFactory
+     * @return \Illuminate\Contracts\Routing\ResponseFactory
      */
     private function generate()
     {
@@ -167,17 +153,17 @@ class Response
         }
 
         // build package structure
-        $structure = config('samego-response.structure', []);
-        $package   = [
-            Arr::get($structure, 'code', 'code')       => $this->code,
-            Arr::get($structure, 'message', 'message') => $this->message,
-            Arr::get($structure, 'data', 'data')       => $this->data,
+        $package = [
+            $this->config['structure']['code']       => $this->code,
+            $this->config['structure']['message']    => $this->message,
+            $this->config['structure']['data']       => $this->data,
+            $this->config['structure']['request_id'] => $GLOBALS['MS_TRANCE_REQUEST_ID'] ?? '',
         ];
 
         // debug meta message
-        if (true === $this->debug) {
+        if (true === $this->config['debug']) {
             $package['debug'] = [
-                'runtime' => (int) (microtime(true) * 1000) - (int) (LARAVEL_START * 1000) . ' ms',
+                'time' => (int) (microtime(true) * 1000) - (int) (LARAVEL_START * 1000) . ' ms',
             ];
         }
 
@@ -185,27 +171,9 @@ class Response
         $this->response = json_encode($package, JSON_UNESCAPED_UNICODE);
 
         // unset useless vars
-        unset($package, $structure);
+        unset($package);
 
         return response($this->response, $this->status_code, $this->headers);
-    }
-
-    /**
-     * @function    log
-     * @description setting log configuration
-     * @param bool $flag
-     * @param null $level
-     * @return self $this
-     */
-    public function log(bool $flag, $level = null)
-    {
-        $this->log = $flag;
-
-        if (null === $level) {
-            $this->log_level = config('samego-response.log.level', 'notice');
-        }
-
-        return $this;
     }
 
     /**
@@ -243,7 +211,7 @@ class Response
      * @param object|array $data        package.data
      * @param int          $status_code http.status_code
      * @param array        $headers     http.headers
-     * @return ResponseFactory
+     * @return \Illuminate\Contracts\Routing\ResponseFactory
      */
     public function result(array $code_enum, $data = [], int $status_code = 200, array $headers = [])
     {

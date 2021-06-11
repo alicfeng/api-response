@@ -7,6 +7,8 @@
 namespace Samego\Response\ServiceProvider;
 
 use Illuminate\Support\ServiceProvider as FrameworkServiceProvider;
+use Samego\Response\Contracts\ApiResponseInterface;
+use Samego\Response\Response;
 
 class ServiceProvider extends FrameworkServiceProvider
 {
@@ -19,21 +21,25 @@ class ServiceProvider extends FrameworkServiceProvider
 
     public function register()
     {
-        $this->mergeConfigFrom(__DIR__ . '/../../../config/samego-response.php', 'response');
+        $this->mergeConfigFrom(__DIR__ . '/../../../config/api-response.php', 'response');
     }
 
     public function boot()
     {
         $this->publishConfig();
+
+        $this->app->bind(ApiResponseInterface::class, function () {
+            return new Response(config('api-response'));
+        });
     }
 
     public function publishConfig()
     {
         $this->publishes(
             [
-                __DIR__ . '/../../../config/samego-response.php' => config_path('samego-response.php'),
+                __DIR__ . '/../../../config/api-response.php' => config_path('api-response.php'),
             ],
-            'samego-response'
+            'api-response'
         );
     }
 }

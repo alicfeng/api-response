@@ -27,7 +27,8 @@ return [
 
     /*Log*/
     'log'       => [
-        'log'   => true,
+        'enable' => true,
+        'level'  => 'info',
     ],
 
     // Translate
